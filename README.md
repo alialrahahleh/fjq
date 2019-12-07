@@ -2,7 +2,7 @@
 
 JQ alternative which maintain comptaiblity with JQ. written in flexable languge and X time faster than JQ.
 
-``
+```
 time cat ko | ./jq #our version of JQ
 real    0m0.008s
 user    0m0.005s
@@ -14,7 +14,7 @@ user    0m0.034s
 sys     0m0.005s
 
 
-``
+```
 
 5x Faster than original JQ.
 
