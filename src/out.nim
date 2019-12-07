@@ -30,7 +30,7 @@ proc prettyPrint*(obj: JsonNode, padding = 0) =
       for k, v in obj.pairs(): 
         if comma:
           echo ","
-        stdout.writeOut(fgYellow, space.repeat(padding) & fmt"{k} : ")
+        stdout.writeOut(fgYellow, space.repeat(padding) & fmt""" "{k}" : """)
         prettyPrint(v,  padding + indent)
         comma = true
 
@@ -38,7 +38,7 @@ proc prettyPrint*(obj: JsonNode, padding = 0) =
       stdout.writeOut(fgWhite, space.repeat(padding -  indent) & "}")
 
     of JString:
-      stdout.writeOut(fgGreen,  fmt""" "{obj.str}" """)
+      stdout.writeOut(fgGreen, fmt""" "{escapeJsonUnquoted(obj.str)}" """ )
     of JInt:
       stdout.writeOut(fgGreen,  fmt"{obj.num}")
     of JFloat:

@@ -14,11 +14,14 @@ proc isEndOfJson(txt: string) : int =
       of  '}':  dec result
       else:  discard
 
-let f = stdin
-
+var f = stdin
 var expr = "."
-if paramCount() > 1:
+
+if paramCount() > 0:
   expr = paramStr(1)
+
+if paramCount() > 1:
+  f = open(paramStr(2), fmRead)
 
 let parsedExpr = expr.parse
 
@@ -26,7 +29,8 @@ var state =  0
 var txt = rope("") 
 while  not f.endOfFile:
   let line = f.readLine
-  txt = txt & line
+  txt = txt & line 
+  txt = txt & "\n"
   state = state +  isEndOfJson(line)
   if state == 0:
     let node = parsedExpr.match(parseJson($txt))
