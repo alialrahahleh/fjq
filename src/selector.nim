@@ -14,13 +14,14 @@ let peg_grammer* = peg"""
 
 type JsonNodeList = seq[JsonNode]
 type 
-    NodeKind* = enum obj_access, array_access, array_range, array_all
+    NodeKind* = enum obj_access, array_access, array_range, array_all, all
     Node* = ref object 
         case kind: NodeKind
             of obj_access: t: tuple[name: string]
             of array_access: i: tuple[index: int]
             of array_range: r: tuple[low: int, high: int]
             of array_all: all: bool
+            of all: a: bool
 
 
 let noValue = none(JsonNodeList)
@@ -77,6 +78,8 @@ proc match(node: Node, current: JsonNode): Option[JsonNodeList] =
                 result = noValue
             else:
                 result =  some(current.elems)
+        of all:
+            result = some(@[current])
 
 
 proc match*(nodes: seq[Node], current: JsonNode ): Option[JsonNodeList] = 
@@ -94,6 +97,9 @@ proc match*(nodes: seq[Node], current: JsonNode ): Option[JsonNodeList] =
     return noValue
 
 proc parse*(sel: string): seq[Node]  =
+    if sel == ".": 
+        return @[Node(kind: all, a: true)]
+
     var res: seq[Node]= @[] 
     var sep = ""
     for word in tokenize(sel, {'.'}):

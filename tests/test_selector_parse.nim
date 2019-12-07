@@ -21,3 +21,8 @@ suite "Test Selector":
   test "test array all selector":
     let ls = ".[]".parse
     check(ls[0].sType == array_all)
+
+  test "test all  selector":
+    let ls = ".".parse
+    check(ls[0].sType == all)
+

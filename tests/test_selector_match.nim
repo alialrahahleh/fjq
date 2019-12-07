@@ -116,4 +116,15 @@ suite "Test Selector":
     let value = res.get()
     check(value[0].kind == JString)
     check(value[0].getStr() == "david")
+
+  test "test all selector":
+    let jsonContent = parseJson("""{
+      "name": "david"
+    }""")
+    let ex = "."
+    let ls = ex.parse
+    check(ls[0].sType == all)
+    let res = match(ls, jsonContent)
+    check(res.isSome())
+
    

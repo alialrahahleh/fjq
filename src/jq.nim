@@ -16,8 +16,10 @@ proc isEndOfJson(txt: string) : int =
 
 let f = stdin
 
-#if paramCount() > 0:
-let expr = paramStr(1)
+var expr = "."
+if paramCount() > 1:
+  expr = paramStr(1)
+
 let parsedExpr = expr.parse
 
 var state =  0
