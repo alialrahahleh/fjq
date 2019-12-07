@@ -32,3 +32,23 @@ sys     0m0.005s
 - Install nim lang [nim lang](https://nim-lang.org/install.html)
 - Run using `cat "JSON-file" | nimble run jq`
 - Run tests using `nimble test`
+
+### Planned features
+
+- Support of 4 running mode formating, highlight, extracting and matching. 
+- Formating  will format json.
+- Highlight will color selected element. 
+- Extracting  will extract specific element.
+- Matching will match current element against specific value and highlight it.
+
+Example:
+```
+json {
+  id: 111,
+  name: "david"
+}
+```
+
+```
+  
+

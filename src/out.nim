@@ -4,7 +4,7 @@ import strutils
 import terminal
 
 
-const indent = 4
+const indent = 2
 
 proc writeOut*(file: File, color: ForegroundColor, txt: string) = 
     if isatty(file): 
@@ -18,10 +18,19 @@ proc prettyPrint*(obj: JsonNode, padding = 0) =
     of JArray:
       var comma = false
       stdout.writeOut(fgMagenta, "[")
+      var multiLine = false
+      if obj.elems.len > 1:
+        multiLine = true
+      let sep = ","
       for x in obj.elems:
-       if comma: stdout.writeOut(fgWhite, ",")
+       if comma: stdout.writeOut(fgWhite, sep)
+       if multiLine:
+        stdout.writeOut(fgYellow, "\n" & space.repeat(padding))
+
        prettyPrint(x)
        comma = true
+      if multiLine:
+        stdout.writeOut(fgYellow, "\n" & space.repeat(padding))
       stdout.writeOut(fgMagenta, "]")
       
     of JObject: 

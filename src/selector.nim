@@ -65,7 +65,7 @@ proc match(node: Node, current: JsonNode): Option[JsonNodeList] =
             elif current.len <= high:
                result =  some(current.elems[low..current.len - 1])
             else:
-               result =  some(current.elems[low..high])
+               result =  some(@[%current.elems[low..high]])
         of obj_access:
             if current.kind != JObject:
                 return noValue
@@ -77,7 +77,7 @@ proc match(node: Node, current: JsonNode): Option[JsonNodeList] =
             if current.len == 0:
                 result = noValue
             else:
-                result =  some(current.elems)
+                result =  some(@[current])
         of all:
             result = some(@[current])
 

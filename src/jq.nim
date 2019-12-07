@@ -36,6 +36,6 @@ while  not f.endOfFile:
     let node = parsedExpr.match(parseJson($txt))
     if node.isSome():
       for x in node.get():
-        prettyPrint(x, 4)
+        prettyPrint(x, 2)
         stdout.writeOut(fgWhite, "\n")
     txt = rope("")
