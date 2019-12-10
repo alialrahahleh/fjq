@@ -30,12 +30,11 @@ var txt = rope("")
 while  not f.endOfFile:
   let line = f.readLine
   txt = txt & line 
-  txt = txt & "\n"
   state = state +  isEndOfJson(line)
   if state == 0:
     let node = parsedExpr.match(parseJson($txt))
     if node.isSome():
       for x in node.get():
-        prettyPrint(x, 2)
+        stdout.prettyPrint(x, 2)
         stdout.writeOut(fgWhite, "\n")
     txt = rope("")

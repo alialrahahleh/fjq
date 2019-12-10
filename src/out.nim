@@ -1,58 +1,56 @@
-import strformat 
+import strformat
 import json
 import strutils
 import terminal
 
-
-const indent = 2
-
-proc writeOut*(file: File, color: ForegroundColor, txt: string) = 
-    if isatty(file): 
-      stdout.styledWrite(color, txt)
+proc writeOut*(file: File, color: ForegroundColor, txt: string) =
+    if isatty(file):
+        file.styledWrite(color, txt)
     else:
-      stdout.write(txt)
+        file.write(txt)
 
-proc prettyPrint*(obj: JsonNode, padding = 0) = 
-  let space = ' '
-  case obj.kind: 
-    of JArray:
-      var comma = false
-      stdout.writeOut(fgMagenta, "[")
-      var multiLine = false
-      if obj.elems.len > 1:
-        multiLine = true
-      let sep = ","
-      for x in obj.elems:
-       if comma: stdout.writeOut(fgWhite, sep)
-       if multiLine:
-        stdout.writeOut(fgYellow, "\n" & space.repeat(padding))
-
-       prettyPrint(x)
-       comma = true
-      if multiLine:
-        stdout.writeOut(fgYellow, "\n" & space.repeat(padding))
-      stdout.writeOut(fgMagenta, "]")
-      
-    of JObject: 
-      var comma = false
-      stdout.writeOut(fgWhite, "{\n")
-      for k, v in obj.pairs(): 
-        if comma:
-          echo ","
-        stdout.writeOut(fgYellow, space.repeat(padding) & fmt""" "{k}" : """)
-        prettyPrint(v,  padding + indent)
-        comma = true
-
-      stdout.writeOut(fgWhite, "\n")
-      stdout.writeOut(fgWhite, space.repeat(padding -  indent) & "}")
-
-    of JString:
-      stdout.writeOut(fgGreen, fmt""" "{escapeJsonUnquoted(obj.str)}" """ )
-    of JInt:
-      stdout.writeOut(fgGreen,  fmt"{obj.num}")
-    of JFloat:
-      stdout.writeOut(fgGreen,  fmt"{obj.fnum}")
-    of JBool:
-      stdout.writeOut(fgGreen,  if obj.bval == true: "true" else: "false")
-    of JNull:
-      stdout.writeOut(fgGreen,  "null")
+proc prettyPrint*(file: File, obj: JsonNode, indent = 0) =
+    proc print(file: File, obj: JsonNode, padding: int) =
+        let space = ' '
+        case obj.kind:
+            of JArray:
+                var comma = false
+                file.writeOut(fgMagenta, "[")
+                var multiLine = false
+                if obj.elems.len > 1:
+                    multiLine = true
+                let sep = ","
+                for x in obj.elems:
+                    if comma: file.writeOut(fgWhite, sep)
+                    if multiLine:
+                        file.writeOut(fgYellow, "\n" & space.repeat(padding))
+                    file.print(x, padding)
+                    comma = true
+                if multiLine:
+                    file.writeOut(fgYellow, "\n" & space.repeat(padding -
+                            indent + 1))
+                file.writeOut(fgMagenta, "]")
+            of JObject:
+                var comma = false
+                file.writeOut(fgWhite, "{\n")
+                for k, v in obj.pairs():
+                    if comma:
+                        echo ","
+                    file.writeOut(fgYellow, space.repeat(padding) &
+                            fmt""" "{k}" : """)
+                    file.print(v, padding + indent)
+                    comma = true
+                file.writeOut(fgWhite, "\n")
+                file.writeOut(fgWhite, space.repeat(padding - indent) & "}")
+            of JString:
+                file.writeOut(fgGreen, fmt""" "{escapeJsonUnquoted(obj.str)}"""")
+            of JInt:
+                file.writeOut(fgGreen, fmt"{obj.num}")
+            of JFloat:
+                file.writeOut(fgGreen, fmt"{obj.fnum}")
+            of JBool:
+                file.writeOut(fgGreen, if obj.bval ==
+                        true: "true" else: "false")
+            of JNull:
+                file.writeOut(fgGreen, "null")
+    print(file, obj, indent)
