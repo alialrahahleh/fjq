@@ -31,7 +31,7 @@ proc prettyPrint*(file: File, obj: JsonNode, indent = 0) =
                 file.writeOut(fgWhite, "{\n")
                 for k, v in obj.pairs():
                     if comma:
-                        echo ","
+                        file.writeLine(",")
                     file.writeOut(fgYellow, space.repeat(padding) &
                             fmt""" "{k}" : """)
                     file.print(v, padding + indent)
