@@ -14,18 +14,14 @@ proc prettyPrint*(file: File, obj: JsonNode, indent = 0) =
         let space = ' '
         case obj.kind:
             of JArray:
-                var comma = false
                 file.writeOut(fgMagenta, "[")
-                var multiLine = false
-                if obj.elems.len > 1:
-                    multiLine = true
-                let sep = ","
-                for x in obj.elems:
-                    if comma: file.writeOut(fgWhite, sep)
+                let multiLine = obj.elems.len > 1
+                for k, x in obj.elems:
                     if multiLine:
                         file.writeOut(fgYellow, "\n" & space.repeat(padding))
                     file.print(x, padding)
-                    comma = true
+                    if k != obj.elems.len - 1:
+                        file.writeOut(fgWhite, ",")
                 if multiLine:
                     file.writeOut(fgYellow, "\n" & space.repeat(padding -
                             indent + 1))
