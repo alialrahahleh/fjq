@@ -1,9 +1,10 @@
-from out import prettyPrint, writeOut 
+from out import prettyPrint 
 from selector import parse, match
 import strutils
 import terminal
 import memfiles
 import ropes
+import streams
 import json
 import os
 import options
@@ -52,6 +53,15 @@ else:
 
 let parsedExpr = expr.parse
 
+var writeOutput : proc (color: ForegroundColor, txt: string)
+if isatty(stdout):
+  writeOutput = proc(color: ForegroundColor, txt: string) = 
+    stdout.styledWrite(color, txt)
+else:
+  let strm = newFileStream("somefile.txt", fmWrite)
+  writeOutput = proc(color: ForegroundColor, txt: string) = 
+    strm.write(txt)
+
 var state =  0
 var txt = rope("") 
 for line in lines(input):
@@ -61,6 +71,6 @@ for line in lines(input):
     let node = parsedExpr.match(parseJson($txt))
     if node.isSome():
       for x in node.get():
-        stdout.prettyPrint(x, 2)
-        stdout.writeOut(fgWhite, "\n")
+        prettyPrint(writeOutput, x, 2)
+        writeOutput(fgWhite, "\n")
     txt = rope("")
