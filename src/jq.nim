@@ -1,6 +1,5 @@
 from out import prettyPrint 
 from selector import parse, match
-import strutils
 import terminal
 import memfiles
 import ropes
@@ -58,7 +57,7 @@ if isatty(stdout):
   writeOutput = proc(color: ForegroundColor, txt: string) = 
     stdout.styledWrite(color, txt)
 else:
-  let strm = newFileStream("somefile.txt", fmWrite)
+  let strm = newFileStream(stdout)
   writeOutput = proc(color: ForegroundColor, txt: string) = 
     strm.write(txt)
 

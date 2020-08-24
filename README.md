@@ -2,6 +2,7 @@
 
 JQ alternative which maintain comptaiblity with JQ. written in flexable languge and X time faster than JQ.
 
+1 line of JSON
 ```
 time cat ko | ./jq #our version of JQ
 real    0m0.008s
@@ -13,6 +14,20 @@ real    0m0.039s
 user    0m0.034s
 sys     0m0.005s
 
+```
+
+2000 Lines of JSON
+```
+$time ./jq . /Users/aalrahahleh/l.json  > out
+ real	0m0.967s
+ user	0m0.926s
+ sys	0m0.035s
+
+
+$time jq . /Users/aalrahahleh/l.json  > out
+ real	0m1.567s
+ user	0m1.530s
+ sys	0m0.035s
 
 ```
 
@@ -51,4 +66,5 @@ json {
 
 ```
   
+
 
