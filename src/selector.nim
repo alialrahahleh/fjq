@@ -24,7 +24,6 @@ type
             of all: a: bool
 
 
-let noValue = none(JsonNodeList)
 
 proc sType*(node: Node): NodeKind =
     result = node.kind
@@ -50,6 +49,7 @@ proc handle_default(s: openArray[string]): Node =
         result = Node(kind: obj_access, t: (name: s[0]))
 
 proc match(node: Node, current: JsonNode): Option[JsonNodeList] =
+    let noValue = none(JsonNodeList)
     case node.kind:
         of array_access: 
             if current.kind != JArray or current.len <= node.i.index : 
@@ -82,7 +82,8 @@ proc match(node: Node, current: JsonNode): Option[JsonNodeList] =
             result = some(@[current])
 
 
-proc match*(nodes: seq[Node], current: JsonNode ): Option[JsonNodeList] = 
+proc match*(nodes: seq[Node], current: JsonNode ): Option[JsonNodeList] {.gcsafe.} = 
+    let noValue = none(JsonNodeList)
     var res = newSeq[JsonNode]()
     if nodes.len != 0:
         let prev =  nodes[0].match(current)

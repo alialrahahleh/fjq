@@ -1,9 +1,11 @@
 from out import prettyPrint 
-from selector import parse, match
+from selector import parse, match, Node
+import sequtils
 import terminal
 import memfiles
 import ropes
 import streams
+import threadpool
 import json
 import os
 import options
@@ -34,7 +36,7 @@ iterator lines(jqInput: JQInput): string =
         yield f.readLine
     of memFile: 
       let memFile = jQInput.memFile
-      for line in memSlices(memFile):
+      for line in lines(memFile):
         yield $line
 
 
@@ -52,24 +54,37 @@ else:
 
 let parsedExpr = expr.parse
 
-var writeOutput : proc (color: ForegroundColor, txt: string)
-if isatty(stdout):
-  writeOutput = proc(color: ForegroundColor, txt: string) = 
-    stdout.styledWrite(color, txt)
-else:
-  let strm = newFileStream(stdout)
-  writeOutput = proc(color: ForegroundColor, txt: string) = 
-    strm.write(txt)
-
-var state =  0
-var txt = rope("") 
-for line in lines(input):
-  txt = txt & line 
-  state = state +  isEndOfJson(line)
-  if state == 0:
-    let node = parsedExpr.match(parseJson($txt))
+proc createTask(input: seq[MemSlice], parsedExpr: seq[Node]): seq[Stream] {.gcsafe.} = 
+  var k: seq[Stream] = @[] 
+  for line in input:
+    let node = parsedExpr.match(parseJson($line))
     if node.isSome():
       for x in node.get():
-        prettyPrint(writeOutput, x, 2)
-        writeOutput(fgWhite, "\n")
-    txt = rope("")
+        k.add(prettyPrint(x, 2))
+
+  return k
+
+if paramCount() > 1 and not isatty(stdout):
+  let memMapped = memfiles.open(paramStr(2), mode = fmReadWrite, mappedSize = -1)
+  var rtotal: seq[FlowVar[seq[Stream]]] = @[]
+  var count = 0
+  var send: seq[MemSlice]= @[]
+  for x in memSlices(memMapped):
+    send.add(x)
+    if count >= 4000:
+      rtotal.add(spawn(createTask(send, parsedExpr))) 
+      send.setLen(0)
+      count = 0
+
+    inc count
+
+
+  if send.len > 0:
+    rtotal.add(spawn(createTask(send, parsedExpr))) 
+
+  stderr.write(rtotal.len)
+  for x in rtotal:
+    let output = ^x
+    for y in output:
+      newFileStream(stdout).write(y.readAll())
+else:
