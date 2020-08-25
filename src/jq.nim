@@ -9,6 +9,7 @@ import threadpool
 import json
 import os
 import options
+import sugar
 
 
 
@@ -89,6 +90,8 @@ if not isatty(stdout) and input.kind == memFile:
     let output = ^x
     for y in output:
       newFileStream(stdout).write(y.readAll())
+      stdout.write("\n")
+
 else:
   var state =  0
   var txt = rope("") 
@@ -100,6 +103,6 @@ else:
       let node = parsedExpr.match(parseJson($txt))
       if node.isSome():
         for x in node.get():
-          stdout.prettyPrint(x, 2)
+          prettyPrint((color: ForegroundColor, text: string) => stdout.writeOut(color, text) , x, 2)
           stdout.writeOut(fgWhite, "\n")
       txt = rope("") 

@@ -42,7 +42,7 @@ real	0m51.826s
 user	5m27.953s
 sys	0m32.030s
 
-#SLOW JQ
+#Super slow  JQ
 time jq . all.json > output
 
 real	4m14.824s
@@ -52,6 +52,23 @@ sys	0m7.229s
 
 ```
 
+
+1,821,458 lines of json object (Extracting speed)
+
+```
+time ./jq .canonical all.json > output  # fast jq
+
+real	0m14.845s
+user	3m2.716s
+sys	0m1.884s
+
+(base) C02YX0SVLVDQ:jq aalrahahleh$ time jq .canonical all.json > output # slow JQ
+
+real	1m0.222s
+user	0m59.412s
+sys	0m0.793s
+
+```
 
 ### Features
 
@@ -75,6 +92,7 @@ sys	0m7.229s
 - Highlight will color selected element. 
 - Extracting  will extract specific element.
 - Matching will match current element against specific value and highlight it.
+
 
 Example:
 ```
