@@ -1,4 +1,4 @@
-from out import prettyPrint 
+from out import prettyPrint, writeOut
 from selector import parse, match, Node
 import sequtils
 import terminal
@@ -37,7 +37,7 @@ iterator lines(jqInput: JQInput): string =
     of memFile: 
       let memFile = jQInput.memFile
       for line in lines(memFile):
-        yield $line
+        yield line
 
 
 var input: JQInput
@@ -64,27 +64,42 @@ proc createTask(input: seq[MemSlice], parsedExpr: seq[Node]): seq[Stream] {.gcsa
 
   return k
 
-if paramCount() > 1 and not isatty(stdout):
-  let memMapped = memfiles.open(paramStr(2), mode = fmReadWrite, mappedSize = -1)
+if paramCount() > 1:
+  input = JQInput(kind: memFile, memfile: memfiles.open(paramStr(2), mode = fmReadWrite, mappedSize = -1))
+else:
+  input = JQInput(kind: standardInput, input: stdin)
+
+
+if not isatty(stdout) and input.kind == memFile:
   var rtotal: seq[FlowVar[seq[Stream]]] = @[]
   var count = 0
   var send: seq[MemSlice]= @[]
-  for x in memSlices(memMapped):
+  for x in memSlices(input.memfile):
     send.add(x)
     if count >= 4000:
       rtotal.add(spawn(createTask(send, parsedExpr))) 
       send.setLen(0)
       count = 0
-
     inc count
-
 
   if send.len > 0:
     rtotal.add(spawn(createTask(send, parsedExpr))) 
 
-  stderr.write(rtotal.len)
   for x in rtotal:
     let output = ^x
     for y in output:
       newFileStream(stdout).write(y.readAll())
 else:
+  var state =  0
+  var txt = rope("") 
+  let output = stdout 
+  for line in lines(input):
+    txt = txt & line 
+    state = state +  isEndOfJson(line)
+    if state == 0:
+      let node = parsedExpr.match(parseJson($txt))
+      if node.isSome():
+        for x in node.get():
+          stdout.prettyPrint(x, 2)
+          stdout.writeOut(fgWhite, "\n")
+      txt = rope("") 

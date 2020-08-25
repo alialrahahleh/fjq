@@ -18,12 +18,13 @@ sys     0m0.005s
 
 2000 Lines of JSON
 ```
+#fastJQ
 $time ./jq . /Users/aalrahahleh/l.json  > out
  real	0m0.967s
  user	0m0.926s
  sys	0m0.035s
 
-
+#OldJQ
 $time jq . /Users/aalrahahleh/l.json  > out
  real	0m1.567s
  user	0m1.530s
@@ -32,6 +33,25 @@ $time jq . /Users/aalrahahleh/l.json  > out
 ```
 
 5x Faster than original JQ.
+
+1,821,458 lines of json object
+```
+time ./jq . all.json  > output # fastJQ
+
+real	0m51.826s
+user	5m27.953s
+sys	0m32.030s
+
+#SLOW JQ
+time jq . all.json > output
+
+real	4m14.824s
+user	4m5.614s
+sys	0m7.229s
+
+
+```
+
 
 ### Features
 
