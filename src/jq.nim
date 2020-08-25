@@ -61,7 +61,9 @@ proc createTask(input: seq[MemSlice], parsedExpr: seq[Node]): seq[Stream] {.gcsa
     let node = parsedExpr.match(parseJson($line))
     if node.isSome():
       for x in node.get():
-        k.add(prettyPrint(x, 2))
+        let strm = newStringStream("")
+        strm.prettyPrint(x, 2)
+        k.add(strm)
 
   return k
 
@@ -103,6 +105,6 @@ else:
       let node = parsedExpr.match(parseJson($txt))
       if node.isSome():
         for x in node.get():
-          prettyPrint((color: ForegroundColor, text: string) => stdout.writeOut(color, text) , x, 2)
+          prettyPrint(stdout, x, 2)
           stdout.writeOut(fgWhite, "\n")
       txt = rope("") 
