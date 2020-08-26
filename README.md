@@ -4,7 +4,7 @@ JQ alternative which maintain comptaiblity with JQ. written in flexable languge 
 
 1 line of JSON
 ```
-time cat ko | ./jq #our version of JQ
+time cat ko | ./fjq #our version of JQ
 real    0m0.008s
 user    0m0.005s
 sys     0m0.005s
@@ -19,7 +19,7 @@ sys     0m0.005s
 2000 Lines of JSON
 ```
 #fastJQ
-$time ./jq . /Users/aalrahahleh/l.json  > out
+$time ./fjq . /Users/aalrahahleh/l.json  > out
  real	0m0.967s
  user	0m0.926s
  sys	0m0.035s
@@ -36,7 +36,7 @@ $time jq . /Users/aalrahahleh/l.json  > out
 
 1,821,458 lines of json object
 ```
-time ./jq . all.json  > output # fastJQ
+time ./fjq . all.json  > output # fastJQ
 
 real    0m19.327s
 user    1m26.461s
@@ -56,7 +56,7 @@ sys	0m7.229s
 1,821,458 lines of json object (Extracting speed)
 
 ```
-time ./jq .canonical all.json > output  # fast jq
+time ./fjq .canonical all.json > output  # fast jq
 
 real	0m14.845s
 user	3m2.716s
@@ -79,6 +79,13 @@ sys	0m0.793s
 - Support for array all selector ".[]"
 - Support for all element accesor ".".
 `
+
+### How to install 
+
+- Install nim lang [nim lang](https://nim-lang.org/install.html)
+- Run `nimble install jq  --passNim:--threads:on`
+- Run `fjq . [json-file]`
+
 ### How to contribute 
 
 - Install nim lang [nim lang](https://nim-lang.org/install.html)
