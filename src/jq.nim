@@ -63,9 +63,18 @@ proc createTask(input: seq[MemSlice], parsedExpr: seq[Node]): seq[Stream] {.gcsa
       for x in node.get():
         let strm = newStringStream("")
         strm.prettyPrint(x, 2)
+        strm.setPosition(0)
         k.add(strm)
 
   return k
+
+proc flush(st: Stream, rtotal: seq[FlowVar[seq[Stream]]]) =
+  for x in rtotal:
+    let output = ^x
+    for y in output:
+      st.write(y.readAll())
+      st.write("\n")
+
 
 if paramCount() > 1:
   input = JQInput(kind: memFile, memfile: memfiles.open(paramStr(2), mode = fmReadWrite, mappedSize = -1))
@@ -74,6 +83,7 @@ else:
 
 
 if not isatty(stdout) and input.kind == memFile:
+  let st  =  newFileStream(stdout)
   var rtotal: seq[FlowVar[seq[Stream]]] = @[]
   var count = 0
   var send: seq[MemSlice]= @[]
@@ -83,16 +93,19 @@ if not isatty(stdout) and input.kind == memFile:
       rtotal.add(spawn(createTask(send, parsedExpr))) 
       send.setLen(0)
       count = 0
+
+    if rtotal.len > 10:
+      flush(st, rtotal)
+      rtotal.setLen(0)
+
     inc count
 
   if send.len > 0:
     rtotal.add(spawn(createTask(send, parsedExpr))) 
 
-  for x in rtotal:
-    let output = ^x
-    for y in output:
-      newFileStream(stdout).write(y.readAll())
-      stdout.write("\n")
+
+  flush(st, rtotal)
+
 
 else:
   var state =  0
