@@ -38,9 +38,9 @@ $time jq . /Users/aalrahahleh/l.json  > out
 ```
 time ./jq . all.json  > output # fastJQ
 
-real	0m51.826s
-user	5m27.953s
-sys	0m32.030s
+real    0m19.327s
+user    1m26.461s
+sys     0m2.556s
 
 #Super slow  JQ
 time jq . all.json > output
