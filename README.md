@@ -1,5 +1,12 @@
-## Fast JQ
+## FastJQ
 
+### How to install 
+
+- Install nim lang [nim lang](https://nim-lang.org/install.html)
+- Run `nimble install jq  --passNim:--threads:on`
+- Run `fjq . [json-file]`
+
+### Why Fast JQ?
 JQ alternative which maintain comptaiblity with JQ. written in flexable languge and X time faster than JQ.
 
 1 line of JSON
@@ -78,22 +85,14 @@ sys	0m0.793s
 - Support for array range accessor ex ".[1:2]"
 - Support for array all selector ".[]"
 - Support for all element accesor ".".
-`
 
-### How to install 
-
-- Install nim lang [nim lang](https://nim-lang.org/install.html)
-- Run `nimble install jq  --passNim:--threads:on`
-- Run `fjq . [json-file]`
-
-### How to contribute 
+### Contribution Guide 
 
 - Install nim lang [nim lang](https://nim-lang.org/install.html)
 - Run using `cat "JSON-file" | nimble run jq`
 - Run tests using `nimble test`
 
-### Planned features
-
+### Future Enhancements
 - Support of 4 running mode formating, highlight, extracting and matching. 
 - Formating  will format json.
 - Highlight will color selected element. 
@@ -101,15 +100,7 @@ sys	0m0.793s
 - Matching will match current element against specific value and highlight it.
 
 
-Example:
-```
-json {
-  id: 111,
-  name: "david"
-}
-```
 
-```
   
 
 
