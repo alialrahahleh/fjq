@@ -4,6 +4,7 @@
 
 - Install nim lang [nim lang](https://nim-lang.org/install.html)
 - Run `nimble install jq  --passNim:--threads:on`
+- Add ~/.nimble/bin/ to your PATH
 - Run `fjq . [json-file]`
 
 ### Why Fast JQ?
