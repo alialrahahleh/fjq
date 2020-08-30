@@ -117,6 +117,21 @@ proc flush(st: Stream, rtotal: seq[FlowVar[seq[Stream]]]) =
       st.write(y.readAll())
       st.write("\n")
 
+proc witeMultiLine[T](output: T) =
+  var state =  0
+  var txt = newStringStream("")
+  for line in lines(input):
+    txt.write(line)
+    state = state +  isEndOfJson(line)
+    if state == 0:
+      txt.setPosition(0)
+      let node = parsedExpr.match(parseJson(txt.readAll()))
+      if node.isSome():
+        for x in node.get():
+          output.prettyPrint(x, 2)
+          output.writeOut(fgWhite, "\n")
+        txt = newStringStream("")
+
 
 if paramCount() > 1:
   input = JQInput(kind: memFile, memfile: memfiles.open(paramStr(2), mode = fmReadWrite, mappedSize = -1))
@@ -148,16 +163,11 @@ if not isatty(stdout) and input.kind == memFile and isEndOfJson(peek(input).get(
   flush(st, rtotal)
 
 else:
-  var state =  0
-  var txt = rope("") 
-  let output = stdout 
-  for line in lines(input):
-    txt = txt & line 
-    state = state +  isEndOfJson(line)
-    if state == 0:
-      let node = parsedExpr.match(parseJson($txt))
-      if node.isSome():
-        for x in node.get():
-          output.prettyPrint(x, 2)
-          output.writeOut(fgWhite, "\n")
-      txt = rope("") 
+  stderr.writeLine("Slow Mode")
+  if not isatty(stdout):
+    stderr.writeLine("stream")
+    witeMultiLine( newFileStream(stdout) )
+  else:
+    witeMultiLine( stdout )
+
+
