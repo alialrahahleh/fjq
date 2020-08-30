@@ -163,9 +163,7 @@ if not isatty(stdout) and input.kind == memFile and isEndOfJson(peek(input).get(
   flush(st, rtotal)
 
 else:
-  stderr.writeLine("Slow Mode")
   if not isatty(stdout):
-    stderr.writeLine("stream")
     witeMultiLine( newFileStream(stdout) )
   else:
     witeMultiLine( stdout )
